@@ -1,0 +1,12 @@
+{
+  "name": "wilko-scaper",
+  "version": "0.0.1",
+  "description": "Command line based web scraper based upon a target company email address.",
+  "main": "server.js",
+  "author": "Aaron Wilkinson",
+  "dependencies": {
+    "cheerio": "latest",
+    "knwl.js": "latest",
+    "request": "latest"
+  }
+}
