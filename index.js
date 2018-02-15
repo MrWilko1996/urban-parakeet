@@ -41,41 +41,42 @@ request(companyURL, function (error, response, html) {
     var knwlInst = new Knwl('english');
     var $  = cheerio.load(html);
 
-    $("span, p").each(function (e, element) {
+    $("span, p, a").each(function (e, element) {
         var targetString = $(this).text();
-        if(targetString === '') {
+        if (targetString === '') {
             return;
         }
         knwlInst.init(targetString);
 
-        // Phone numbers
+        // Email Addresses
+        var emailAddresses = (knwlInst.get('emails'));
+
+        for (index = 0; index < emailAddresses.length; index++) {
+            if (emailAddresses[index]['address'].length >= 1 && additionalCompanyEmails[emailAddresses[index]['address']] !== emailAddresses[0]['address']) {
+                additionalCompanyEmails[emailAddresses[index]['address']] = emailAddresses[0]['address'];
+            }
+        }
+        
+        // Phone Numbers
         var phoneNumbers = (knwlInst.get('phones'));
         if (phoneNumbers === undefined || phoneNumbers.length === 0) {
             targetString = targetString.replace(/\s+/g, '');
-            if(targetString.charAt(0) === "+") {
+            if (targetString.charAt(0) === "+") {
                 targetString = targetString.slice(1);
             }
             knwlInst.init(targetString);
             phoneNumbers = (knwlInst.get('phones'));
         }
-        if (targetString.length >= 1 && phoneNumbers !== undefined) {
-            companyPhoneNumbers[targetString] = phoneNumbers;
+
+
+        for (index = 0; index < phoneNumbers.length; index++) {
+            if (phoneNumbers[index]['phone'].length >= 1 && companyPhoneNumbers[phoneNumbers[index]['phone']] !== phoneNumbers[0]['phone']) {
+                companyPhoneNumbers[phoneNumbers[index]['phone']] = phoneNumbers[0]['phone'];
+            }
         }
     });
 
-    for (var index in companyPhoneNumbers) {
-        if(index === '' || companyPhoneNumbers[index].length === 0 || companyPhoneNumbers[index].empty()) {
-             delete (companyPhoneNumbers[index]);
-        }
-    }
+    console.log(additionalCompanyEmails);
     console.log(companyPhoneNumbers);
 
-    console.log("Phone numbers found: " + companyPhoneNumbers.length);
-
 });
-
-
-
-
-
-
